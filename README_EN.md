@@ -38,8 +38,6 @@ git update-index --no-assume-unchanged
 
 4. For Postman or additional examples, please use version **9.31.28**. If you don’t have it, you can download it [here](https://github.com/Radium-bit/postman_noLogin_backup/releases/tag/9.31.28).
 
-5. 
-
 ## Building the Jar for Execution
 
 1. Set up **OpenJDK 17 (LTS)**.
