@@ -1,0 +1,64 @@
+{
+	"info": {
+		"_postman_id": "cab1ee76-74ee-4648-be38-ea6c22355156",
+		"name": "SakuraVideoConverter测试接口",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "上传动漫资源转码",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "file",
+							"description": "视频资源文件",
+							"type": "file",
+							"src": []
+						},
+						{
+							"key": "subfile",
+							"description": "字幕文件（烧录）",
+							"type": "file",
+							"src": []
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:8080/uploadAnime",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"uploadAnime"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "配置获取测试",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/getConfig",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"getConfig"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
