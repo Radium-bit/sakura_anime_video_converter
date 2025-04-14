@@ -1,8 +1,6 @@
 spring.application.name=VideoConverter
 
 # 监听端口
-
-# 监听端口
 server.port=8080
 
 # 文件处理相关
