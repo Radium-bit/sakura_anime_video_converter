@@ -10,7 +10,7 @@ A standalone video encoder from **sakura_anime_backend**, encoding videos into m
 
 - **FFmpeg**: Make sure it is properly installed and configured. You can download it from [here](https://www.ffmpeg.org/download.html).
 
-- **MariaDB 10.11**: Import the provided database. The default database name is `sakura_anime`.
+- 
 
 #### Note:
 

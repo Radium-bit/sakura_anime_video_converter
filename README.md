@@ -11,8 +11,6 @@
 - Maven
 * 已经配置好的ffmpeg，可以到[这里下载](https://www.ffmpeg.org/download.html)
 
-MariaDB 10.11 并导入数据库，数据库默认名为`sakura_anime`
-
 #### 注意：
 
 **application.properties现在不建议受Git更新，避免由于开发组成员更新导致的启动问题。取而代之的是同目录下的** `application.properties模板.temp` **文件，它会提供一个很好的模板，下载之后请根据它来配置你的properties文件。**
@@ -38,8 +36,6 @@ git update-index --no-assume-unchanged
 3. 由于项目涉及视频编解码，建议在拥有NVIDIA GPU或者强大算力CPU的计算机运行。
 
 4. 使用Postman或新增样例请使用9.31.28版本，没有可以在[这里下载](https://github.com/Radium-bit/postman_noLogin_backup/releases/tag/9.31.28)。
-
-5. 
 
 ## 编译为Jar运行：
 
