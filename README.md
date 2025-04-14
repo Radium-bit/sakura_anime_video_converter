@@ -68,3 +68,11 @@ git update-index --no-assume-unchanged
    ```
 
 10. 如运行成功，通过配置好的端口即可访问数据。
+
+## 使用Docker运行：
+
+1. 安装Docker
+
+2. 修改`start-container.sh`的全局变量
+
+3. 保持网络畅通，运行`start-container.sh`

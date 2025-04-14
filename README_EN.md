@@ -73,3 +73,13 @@ git update-index --no-assume-unchanged
    ```
 
 10. If the application runs successfully, you can access the data via the configured port.
+
+
+
+## Run with Docker:
+
+1. Install Docker
+
+2. Modify the global variables of `start-container.sh`
+
+3. Keep the network open and run `start-container.sh`
