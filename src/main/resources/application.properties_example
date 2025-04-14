@@ -7,7 +7,9 @@ server.port=8080
 
 # 文件处理相关
 ## 文件上传下载配置，必须以/结尾（表示路径），且必须为绝对路径，最好不要使用反斜杠区分路径，以下是一个示例。
-file.upload-dir=D:/MyProject/Sakura_Anime/storgeFiles/
+## file.upload-dir=D:/MyProject/Sakura_Anime/storgeFiles/
+## 默认配置为Docker共享路径
+file.upload-dir=/shared/
 ## 前缀，决定子目录和转码文件夹的开头如何
 file.prefix=anime
 
