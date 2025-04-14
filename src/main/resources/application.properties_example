@@ -1,6 +1,8 @@
 spring.application.name=VideoConverter
 
 # 监听端口
+
+# 监听端口
 server.port=8080
 
 # 文件处理相关
@@ -27,11 +29,9 @@ ffmpeg.threads=0
 spring.servlet.multipart.max-file-size=10GB
 spring.servlet.multipart.max-request-size=10GB
 
-# 【安全设置】
-## 启用配置获取，用于测试程序是否可以正确读取配置文件
-program.enable-echo-config=false
-## swagger 在线文档
+# 开启 swagger 文档
 springdoc.api-docs.enabled=false
 springdoc.swagger-ui.enabled=false
-## Spring DevTools 热重启配置
+
+# Spring DevTools 热重启配置
 spring.devtools.restart.enabled=false

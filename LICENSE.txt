@@ -1,0 +1,3 @@
+This project adopts a ​​mixed license​​.
+The portion ​​entirely derived from sakura_anime_backend​​ remains under the original ​​GNU LGPL-3.0​​ license.
+All other components are licensed under the ​​MIT License​​.

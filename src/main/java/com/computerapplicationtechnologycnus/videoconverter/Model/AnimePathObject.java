@@ -1,3 +1,7 @@
+/* Copyright (c) 2025 Radium-bit
+ * SPDX-License-Identifier: MIT
+ * See LICENSE-MIT file for full terms */
+
 package com.computerapplicationtechnologycnus.videoconverter.Model;
 
 import io.swagger.v3.oas.annotations.media.Schema;
