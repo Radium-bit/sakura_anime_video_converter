@@ -1,0 +1,39 @@
+spring.application.name=VideoConverter
+
+# 监听端口
+
+# 监听端口
+server.port=8080
+
+# 文件处理相关
+## 文件上传下载配置，必须以/结尾（表示路径），且必须为绝对路径，最好不要使用反斜杠区分路径，以下是一个示例。
+file.upload-dir=D:/MyProject/Sakura_Anime/storgeFiles/
+## 前缀，决定子目录和转码文件夹的开头如何
+file.prefix=anime
+
+# FFMPEG转码配置
+## 单个切片时长(秒)
+ffmpeg.hls.time=30
+## 视频最大码率
+ffmpeg.video.maxrate=5000
+## 视频平均码率（VBR模式)
+ffmpeg.video.avgrate=3000
+## 是否开启N卡加速编码（默认开启，转码遇到问题请关闭）
+ffmpeg.video.enableNvenc=true
+## FFMPEG程序路径，若已经配好环境变量，则不需要改动
+ffmpeg.locate="ffmpeg"
+## FFMPEG的转码线程数，默认0为自动，会占用全部CPU/GPU，要多少线程就写多少，不能超过硬件限制
+ffmpeg.threads=0
+
+# HTTP单次上传的最大请求大小，为了传视频弄大点。
+spring.servlet.multipart.max-file-size=10GB
+spring.servlet.multipart.max-request-size=10GB
+
+# 【安全设置】
+## 启用配置获取，用于测试程序是否可以正确读取配置文件
+program.enable-echo-config=false
+## swagger 在线文档
+springdoc.api-docs.enabled=false
+springdoc.swagger-ui.enabled=false
+## Spring DevTools 热重启配置
+spring.devtools.restart.enabled=false

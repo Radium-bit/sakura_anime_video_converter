@@ -1,0 +1,48 @@
+package com.computerapplicationtechnologycnus.videoconverter.Controller;
+
+import com.computerapplicationtechnologycnus.videoconverter.Common.ResultMessage;
+import com.computerapplicationtechnologycnus.videoconverter.Config.FFmpegConfig;
+import com.computerapplicationtechnologycnus.videoconverter.Config.FileStorageProperties;
+import com.computerapplicationtechnologycnus.videoconverter.Config.ProgramConfig;
+import lombok.Data;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+public class ConfigController {
+
+    private final FFmpegConfig ffmpegConfig;
+    private final FileStorageProperties fileStorageProperties;
+    private final ProgramConfig programConfig;
+
+    public ConfigController(FFmpegConfig ffmpegConfig, FileStorageProperties fileStorageProperties, ProgramConfig programConfig) {
+        this.ffmpegConfig = ffmpegConfig;
+        this.fileStorageProperties = fileStorageProperties;
+        this.programConfig = programConfig;
+    }
+
+    /**
+     * 获取当前配置
+     */
+    @GetMapping("/getConfig")
+    public ResultMessage<ConfigSummary> getConfigs() {
+        try {
+            if (programConfig.isEnableEchoConfig()) {
+                return ResultMessage.message(
+                        new ConfigSummary(ffmpegConfig, fileStorageProperties, programConfig),
+                        true, "获取配置成功");
+            } else {
+                return ResultMessage.message(false, "未允许获取配置");
+            }
+        } catch (Exception e) {
+            return ResultMessage.message(false, "执行失败: " + e.getMessage());
+        }
+    }
+
+    @Data
+    public static class ConfigSummary {
+        private final FFmpegConfig ffmpegConfig;
+        private final FileStorageProperties fileConfig;
+        private final ProgramConfig programConfig;
+    }
+}
