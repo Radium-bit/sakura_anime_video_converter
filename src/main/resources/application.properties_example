@@ -29,9 +29,11 @@ ffmpeg.threads=0
 spring.servlet.multipart.max-file-size=10GB
 spring.servlet.multipart.max-request-size=10GB
 
-# 开启 swagger 文档
+# 【安全设置】
+## 是否启用设置回显
+program.enable-echo-config=false
+## swagger 文档
 springdoc.api-docs.enabled=false
 springdoc.swagger-ui.enabled=false
-
-# Spring DevTools 热重启配置
+## Spring DevTools 热重启配置
 spring.devtools.restart.enabled=false
