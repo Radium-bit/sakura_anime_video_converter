@@ -14,7 +14,7 @@ A standalone video encoder from **sakura_anime_backend**, encoding videos into m
 
 #### Note:
 
-It is now recommended that the `application.properties` file is not updated through Git to avoid startup issues caused by changes from different development team members. Instead, please use the **`application.properties模板.temp`** file located in the same directory. This file will serve as an excellent template—after downloading it, please configure your properties file accordingly.
+It is now recommended that the `application.properties` file is not updated through Git to avoid startup issues caused by changes from different development team members. Instead, please use the **`application.properties_example`** file located in the same directory. This file will serve as an excellent template—after downloading it, please configure your properties file accordingly.
 
 To ensure that your Git excludes this configuration file, run the following command in the project's cloned/downloaded directory:
 
