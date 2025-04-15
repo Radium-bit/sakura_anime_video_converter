@@ -16,6 +16,8 @@ file.prefix=anime
 # FFMPEG转码配置
 ## 单个切片时长(秒)
 ffmpeg.hls.time=30
+## FFMPEG转码质量，数字越低越好但时间更长 [0.Auto/Default; 1.veryslow;2.slower;3.medium;4.fast;5.veryfast;6.ultrafast]
+ffmpeg.preset-level=1
 ## 视频最大码率
 ffmpeg.video.maxrate=5000
 ## 视频平均码率（VBR模式)

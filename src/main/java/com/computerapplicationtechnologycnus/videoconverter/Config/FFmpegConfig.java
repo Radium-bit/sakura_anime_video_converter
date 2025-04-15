@@ -23,6 +23,9 @@ public class FFmpegConfig {
     @Schema(description = "FFMPEG程序的转码线程数，填0自动")
     private int threads;
 
+    @Schema(description = "FFMPEG的转码预设")
+    private int presetLevel;
+
     @Data
     public static class Hls {
         @Schema(description = "FFMPEG 单个切片时长")
