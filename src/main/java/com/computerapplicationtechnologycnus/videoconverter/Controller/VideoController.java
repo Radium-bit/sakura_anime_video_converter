@@ -1,9 +1,9 @@
 /* Copyright (c) 2025 Radium-bit
  * SPDX-License-Identifier: MIT
  * See LICENSE-MIT file for full terms */
-
 package com.computerapplicationtechnologycnus.videoconverter.Controller;
 
+import com.computerapplicationtechnologycnus.videoconverter.Annotation.AuthRequired;
 import com.computerapplicationtechnologycnus.videoconverter.Common.ResultMessage;
 import com.computerapplicationtechnologycnus.videoconverter.Config.FileStorageProperties;
 import com.computerapplicationtechnologycnus.videoconverter.Model.ResponseData;
@@ -33,6 +33,7 @@ public class VideoController {
      * 视频文件上传接口
      */
     @PostMapping("/uploadAnime")
+    @AuthRequired
     public ResultMessage<ResponseData> uploadVideo(
             @RequestParam("file") MultipartFile file,
             @RequestParam(value = "subfile", required = false) MultipartFile subtitleFile) {

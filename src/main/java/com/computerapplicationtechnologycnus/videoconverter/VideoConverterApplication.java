@@ -6,8 +6,10 @@ package com.computerapplicationtechnologycnus.videoconverter;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.web.servlet.ServletComponentScan;
 
 @SpringBootApplication
+@ServletComponentScan  // 确保启用 WebFilter
 public class VideoConverterApplication {
 
     public static void main(String[] args) {

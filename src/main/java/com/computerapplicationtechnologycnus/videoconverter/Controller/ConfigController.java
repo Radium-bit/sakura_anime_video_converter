@@ -1,5 +1,9 @@
+/* Copyright (c) 2025 Radium-bit
+ * SPDX-License-Identifier: MIT
+ * See LICENSE-MIT file for full terms */
 package com.computerapplicationtechnologycnus.videoconverter.Controller;
 
+import com.computerapplicationtechnologycnus.videoconverter.Annotation.AuthRequired;
 import com.computerapplicationtechnologycnus.videoconverter.Common.ResultMessage;
 import com.computerapplicationtechnologycnus.videoconverter.Config.FFmpegConfig;
 import com.computerapplicationtechnologycnus.videoconverter.Config.FileStorageProperties;
@@ -25,6 +29,7 @@ public class ConfigController {
      * 获取当前配置
      */
     @GetMapping("/getConfig")
+    @AuthRequired
     public ResultMessage<ConfigSummary> getConfigs() {
         try {
             if (programConfig.isEnableEchoConfig()) {

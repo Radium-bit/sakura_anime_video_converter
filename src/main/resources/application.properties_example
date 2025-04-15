@@ -32,10 +32,23 @@ spring.servlet.multipart.max-file-size=10GB
 spring.servlet.multipart.max-request-size=10GB
 
 # 【安全设置】
-## 是否启用设置回显
+## 是否启用设置回显，启用后可获得配置文件内容，请勿在生产环境启用
 program.enable-echo-config=false
+## 程序访问Token，请自行使用足够长的随机字符
+program.programToken=This_Is_Test_Token_Please_Replace_It_With_Strong_Random_String
+## 是否启用UserAgent检查器
+program.useragent.enableChecker=true
+### UserAgent检测黑白名单，留空则不检测，填写全匹配型正则表达式
+### 预制黑名单：(?i)^.*(python-requests|curl|wget|Apache-HttpClient|Scrapy|bot|spider|crawler).*
+program.useragent.blacklist=(?i)^.*(python-requests|curl|wget|Apache-HttpClient|Scrapy|bot|spider|crawler).*
+### UserAgent检测白名单
+### 预制白名单：^(Mozilla|Chrome|Safari|Edge|Opera|Gecko|PostmanRuntime|VLC).*$
+program.useragent.whitelist=
+
 ## swagger 文档
 springdoc.api-docs.enabled=false
 springdoc.swagger-ui.enabled=false
 ## Spring DevTools 热重启配置
 spring.devtools.restart.enabled=false
+## Spring DevTools 热部署
+spring.devtools.add-properties=false
