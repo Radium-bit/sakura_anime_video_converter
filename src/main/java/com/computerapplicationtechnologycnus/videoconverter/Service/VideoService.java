@@ -77,7 +77,7 @@ public class VideoService {
                 Pattern pattern = Pattern.compile(".*subtitle.*", Pattern.CASE_INSENSITIVE); // 匹配所有包含 'subtitle' 的行，不区分大小写
 
                 // 定义需要匹配的语言标志
-                List<String> languageIndicators = Arrays.asList("sc", "zh", "chs", "zho", "chi");
+                List<String> languageIndicators = Arrays.asList("sc", "zh", "chs", "zho", "chi", "zh-Hans");
 
                 while ((checkLine = checkReader.readLine()) != null) {
                     // 查找字幕流的描述信息
