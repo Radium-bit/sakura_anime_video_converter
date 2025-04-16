@@ -271,18 +271,6 @@ public class VideoService {
         });
     }
 
-    private String extractLanguageFromSubtitleLine(String line) {
-        // 使用正则表达式从字幕信息中提取语言
-        // 例如从 "Stream #0:3(chi): Subtitle: ass (default)" 中提取 "chi"
-        Pattern languagePattern = Pattern.compile("Stream.*\\((.*?)\\): Subtitle", Pattern.CASE_INSENSITIVE);
-        Matcher matcher = languagePattern.matcher(line);
-
-        if (matcher.find()) {
-            return matcher.group(1); // 返回字幕轨道的语言部分
-        }
-        return "";
-    }
-
     /**
      * 异步转码视频到 m3u8
      * 并烧录字幕文件
