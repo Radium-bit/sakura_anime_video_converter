@@ -36,7 +36,8 @@ public class VideoController {
     @AuthRequired
     public ResultMessage<ResponseData> uploadVideo(
             @RequestParam("file") MultipartFile file,
-            @RequestParam(value = "subfile", required = false) MultipartFile subtitleFile) {
+            @RequestParam(value = "subfile", required = false) MultipartFile subtitleFile,
+            @RequestParam(value = "copy",required = false) String useCopyMod) {
 
         try {
             // 验证视频文件
@@ -75,6 +76,9 @@ public class VideoController {
                 String subPath = uploadDir + uniqueName + subExt;
                 subtitleFile.transferTo(new File(subPath));
                 videoService.convertVideoToM3u8AddSubtitle(videoPath, subPath);
+            } else if ("1".equals(useCopyMod)) {
+                // 直接拷贝视频，不处理视频流，也不处理字幕数据
+                videoService.copyVideoToM3u8(videoPath);
             } else {
                 videoService.convertVideoToM3u8(videoPath);
             }

@@ -550,4 +550,232 @@ public class VideoService {
             throw new RuntimeException("动漫索引数据备份失败：" + e.getMessage(), e);
         }
     }
+
+    /**
+     * 异步封装视频到 m3u8
+     * 【注意！】请务必使用符合m3u8格式的数据流！它不会转码！
+     * 不会处理任何字幕数据，最多把它尝试封装到m3u8
+     *
+     * @param videoFilePath 原视频文件路径
+     */
+    public void copyVideoToM3u8(String videoFilePath) {
+        executorService.submit(() -> {
+            try {
+
+                // 创建 m3u8 输出文件夹
+                String outputDirPath = videoFilePath.substring(0, videoFilePath.lastIndexOf('.'));
+                File outputDir = new File(outputDirPath);
+                if (!outputDir.exists() && !outputDir.mkdirs()) {
+                    throw new IOException("无法创建输出目录：" + outputDirPath);
+                }
+
+                // 执行 ffmpeg 命令，查看是否存在字幕轨道
+                String checkCommand = "ffmpeg -i " + "'"+videoFilePath+"'";
+                Process checkProcess = Runtime.getRuntime().exec(checkCommand);
+                BufferedReader checkReader = new BufferedReader(new InputStreamReader(checkProcess.getErrorStream()));
+                String checkLine;
+                int subtitleStreamIndex = -1; // 用于存储找到的字幕流索引
+                String subtitleTrackLanguage = ""; // 用来存储找到的字幕语言
+                String subtitleTrackType = ""; //字幕类型
+                String subtitleFilePath = ""; //字幕文件路径
+                Pattern pattern = Pattern.compile(".*subtitle.*", Pattern.CASE_INSENSITIVE); // 匹配所有包含 'subtitle' 的行，不区分大小写
+
+                // 定义需要匹配的语言标志
+                List<String> languageIndicators = Arrays.asList("sc", "zh", "chs", "zho", "chi");
+
+                while ((checkLine = checkReader.readLine()) != null) {
+                    // 查找字幕流的描述信息
+                    if (checkLine.contains("Subtitle")) {
+                        logger.info("原始字幕行: {}", checkLine);
+                        // 调整正则表达式，并打印详细日志
+                        Pattern subtitlePattern = Pattern.compile("Stream #(\\d+:\\d+)\\s*\\(([^)]+)\\):\\s*Subtitle:\\s*(.+)");
+                        Matcher streamMatcher = subtitlePattern.matcher(checkLine);
+                        logger.info("正则表达式: {}", subtitlePattern.pattern());
+                        logger.info("待匹配文本: {}", checkLine);
+                        if (streamMatcher.find()) {
+                            String streamId = streamMatcher.group(1);
+                            String language = streamMatcher.group(2).toLowerCase();
+                            String subtitleType = streamMatcher.group(3).split(" ")[0];
+                            logger.info("匹配成功 - 流ID: {}, 语言: {}, 字幕类型: {}", streamId, language, subtitleType);
+                            if (languageIndicators.contains(language)) {
+                                // 执行命令行赋值
+                                subtitleStreamIndex = Integer.parseInt(streamId.split(":")[1]);
+                                subtitleTrackLanguage = language;
+                                subtitleTrackType = subtitleType;
+                                logger.info("匹配的语言符合条件，已设置字幕流参数");
+                                break; // 退出循环，因为已经找到符合条件的字幕流
+                            }
+                        } else {
+//                            logger.warn("未能匹配字幕行: {}", checkLine);
+                            logger.info("未能匹配字幕行，可能不存在字幕");
+                        }
+                    }
+                }
+
+                // 构建 FFmpeg 命令
+                String m3u8FilePath = outputDirPath + "/playlist.m3u8";
+                String encodingType = "libx264";
+                String subtitleTransfer = "";
+                String ffmpegLocate = ffmpegConfig.getLocate();
+                if(ffmpegLocate.isEmpty()){ //防止空命令错误，如果为空，默认使用"ffmpeg"命令
+                    ffmpegLocate="ffmpeg";
+                }
+                if(ffmpegConfig.getVideo().isEnableNvenc()){ //如果启用NVENC加速
+                    encodingType = "h264_nvenc";
+                }
+                // 如果找到字幕流，先把字幕拉出来，然后再合并烧录
+                if (subtitleStreamIndex != -1) {
+                    // 构建字幕文件路径（去掉原视频文件扩展名，添加字幕扩展名）
+                    subtitleFilePath = videoFilePath.substring(0, videoFilePath.lastIndexOf('.')) + "." + subtitleTrackType;
+
+                    // 构建 FFmpeg 提取字幕的命令
+                    String extractSubtitleCommand = String.format(
+                            ffmpegLocate+" -i \"%s\" -map 0:%d \"%s\"",
+                            videoFilePath,
+                            subtitleStreamIndex,
+                            subtitleFilePath
+                    );
+                    try {
+                        // 执行提取字幕的命令
+                        Process extractProcess = Runtime.getRuntime().exec(extractSubtitleCommand);
+                        // 处理输出流和错误流
+                        Thread outputReader = new Thread(() -> {
+                            try (BufferedReader reader = new BufferedReader(new InputStreamReader(extractProcess.getInputStream()))) {
+                                String line;
+                                while ((line = reader.readLine()) != null) {
+                                    logger.info("FFmpeg 输出: {}", line);
+                                }
+                            } catch (IOException e) {
+                                logger.error("读取 FFmpeg 输出时发生错误", e);
+                            }
+                        });
+
+                        Thread errorReader = new Thread(() -> {
+                            try (BufferedReader reader = new BufferedReader(new InputStreamReader(extractProcess.getErrorStream()))) {
+                                String line;
+                                while ((line = reader.readLine()) != null) {
+                                    logger.info("FFmpeg 预处理: {}", line);
+                                }
+                            } catch (IOException e) {
+                                logger.error("读取 FFmpeg 错误时发生错误", e);
+                            }
+                        });
+
+                        // 启动线程
+                        outputReader.start();
+                        errorReader.start();
+                        // 等待进程结束
+                        int extractExitCode = extractProcess.waitFor();
+                        // 确保线程完成
+                        outputReader.join();
+                        errorReader.join();
+
+                        if (extractExitCode == 0) {
+                            // 提取成功
+                            logger.info("字幕提取成功，路径: {}", subtitleFilePath);
+
+                            // 构建字幕烧录的参数
+                            subtitleTransfer = String.format(
+                                    "-vf subtitles='%s'",
+                                    subtitleFilePath.replace("\\\\","/").replace(":", "\\:")
+                            );
+                        } else {
+                            // 提取失败
+                            logger.error("字幕提取失败，退出码: {}", extractExitCode);
+                            subtitleFilePath = ""; // 重置字幕文件路径
+                            subtitleTransfer = ""; //重置字幕命令部分
+                        }
+                    } catch (Exception e) {
+                        logger.error("提取字幕时发生错误", e);
+                        subtitleFilePath = ""; // 重置字幕文件路径
+                        subtitleTransfer = ""; //重置字幕命令部分
+                    }
+                }
+                String osName = System.getProperty("os.name").toLowerCase();
+                boolean isWindows = osName.contains("win");
+                String command="";
+                if(isWindows){
+                    //最终执行命令Builder
+                    command = String.format(
+                            "%s -threads 0 -hwaccel auto -i \"%s\" -c copy -map v:0 -map a:0 %s " +
+                                    "-f hls -hls_time %d -hls_list_size 0 \"%s\"",
+                            ffmpegLocate,
+                            videoFilePath,
+                            subtitleTransfer,  // 如果有字幕流需处理（如 -c:s copy）
+                            ffmpegConfig.getHls().getTime(),
+                            m3u8FilePath
+                    );
+                }else{
+                    //最终执行命令Builder
+                    command = String.format(
+                            "%s -threads 0 -hwaccel auto -i %s -c copy -map v:0 -map a:0 %s " +
+                                    "-f hls -hls_time %d -hls_list_size 0 %s",
+                            ffmpegLocate,
+                            videoFilePath,
+                            subtitleTransfer,  // 如果有字幕流需处理（如 -c:s copy）
+                            ffmpegConfig.getHls().getTime(),
+                            m3u8FilePath
+                    );
+                }
+
+
+                // 新增代码：获取当前执行用户
+                Process whoamiProcess = Runtime.getRuntime().exec("whoami");
+                BufferedReader whoamiReader = new BufferedReader(new InputStreamReader(whoamiProcess.getInputStream()));
+                String currentUser = whoamiReader.readLine().trim();
+                whoamiProcess.waitFor();
+
+                logger.info("执行用户: {}", currentUser);  // 记录账户名
+
+                // 执行 FFmpeg 命令
+                logger.info("执行 FFmpeg 转码命令: {}", command);
+                Process process = Runtime.getRuntime().exec(command);
+
+                // 处理标准输出和错误流
+                new Thread(() -> {
+                    try (var reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
+                        String line;
+                        while ((line = reader.readLine()) != null) {
+                            logger.info("FFmpeg 输出: {}", line);
+                        }
+                    } catch (IOException e) {
+                        logger.error("读取 FFmpeg 标准输出时发生错误", e);
+                    }
+                }).start();
+
+                new Thread(() -> {
+                    try (var reader = new BufferedReader(new InputStreamReader(process.getErrorStream()))) {
+                        String line;
+                        while ((line = reader.readLine()) != null) {
+                            logger.info("FFmpeg 信息: {}", line);
+                        }
+                    } catch (IOException e) {
+                        logger.error("读取 FFmpeg 错误输出时发生错误", e);
+                    }
+                }).start();
+
+                int exitCode = process.waitFor();
+                if (exitCode == 0) {
+                    logger.info("转码成功，输出路径: {}", m3u8FilePath);
+                } else {
+                    logger.error("转码失败，FFmpeg 退出码: {}", exitCode);
+                }
+
+                // 转码完成后，删除原视频文件
+                File originalFile = new File(videoFilePath);
+                if (originalFile.exists() && !originalFile.delete()) {
+                    logger.warn("无法删除原视频文件: {}", videoFilePath);
+                }
+                if(subtitleStreamIndex!=-1){
+                    File originalSubFile = new File(subtitleFilePath);
+                    if(originalSubFile.exists() && !originalSubFile.delete()){
+                        logger.warn("无法删除生成的字幕文件：{}",subtitleFilePath);
+                    }
+                }
+
+            } catch (Exception e) {
+                logger.error("视频转码过程中发生错误", e);
+            }
+        });
+    }
 }

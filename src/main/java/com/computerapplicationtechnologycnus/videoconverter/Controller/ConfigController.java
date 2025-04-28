@@ -8,13 +8,19 @@ import com.computerapplicationtechnologycnus.videoconverter.Common.ResultMessage
 import com.computerapplicationtechnologycnus.videoconverter.Config.FFmpegConfig;
 import com.computerapplicationtechnologycnus.videoconverter.Config.FileStorageProperties;
 import com.computerapplicationtechnologycnus.videoconverter.Config.ProgramConfig;
+import com.computerapplicationtechnologycnus.videoconverter.Interceptor.AuthInterceptor;
 import lombok.Data;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class ConfigController {
 
+    private static final Logger logger = LoggerFactory.getLogger(ConfigController.class);
     private final FFmpegConfig ffmpegConfig;
     private final FileStorageProperties fileStorageProperties;
     private final ProgramConfig programConfig;
