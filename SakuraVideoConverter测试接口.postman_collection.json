@@ -24,6 +24,12 @@
 							"description": "字幕文件（烧录）",
 							"type": "file",
 							"src": []
+						},
+						{
+							"key": "copy",
+							"value": "0",
+							"description": "值为\"1\"时，使用仅复制模式，而不转码视频",
+							"type": "default"
 						}
 					]
 				},
@@ -39,7 +45,82 @@
 					]
 				}
 			},
-			"response": []
+			"response": [
+				{
+					"name": "上传动漫资源转码",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "file",
+									"description": "视频资源文件",
+									"type": "file",
+									"src": "/D:/Movies/[DMG] 劇場版 聲の形 [BDRip][AVC_AAC][1080P][CHS](AB0AECEC).mp4"
+								},
+								{
+									"key": "subfile",
+									"description": "字幕文件（烧录）",
+									"type": "file",
+									"src": []
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:8080/uploadAnime",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"uploadAnime"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Vary",
+							"value": "Origin"
+						},
+						{
+							"key": "Vary",
+							"value": "Access-Control-Request-Method"
+						},
+						{
+							"key": "Vary",
+							"value": "Access-Control-Request-Headers"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"key": "Transfer-Encoding",
+							"value": "chunked"
+						},
+						{
+							"key": "Date",
+							"value": "Tue, 15 Apr 2025 07:01:19 GMT"
+						},
+						{
+							"key": "Keep-Alive",
+							"value": "timeout=60"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"message\": \"上传完成，转码中。\",\n    \"status\": true,\n    \"data\": {\n        \"storedPath\": \"/storgeFiles/anime/\",\n        \"fileName\": \"anime_1744700214847\"\n    },\n    \"error\": null\n}"
+				}
+			]
 		},
 		{
 			"name": "配置获取测试",
